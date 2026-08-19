@@ -9,9 +9,9 @@ import { RatingStars } from '../components/common/RatingStars';
 import { useToast } from '../context/ToastContext';
 import apiClient from '../services/api';
 
-const WishlistPage = () => {
+export const WishlistPage: React.FC = () => {
   const navigate = useNavigate();
-  const { showToast, success, error: toastError } = useToast();
+  const { success, error: toastError } = useToast();
   
   const [wishlist, setWishlist] = useState<Car[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +21,6 @@ const WishlistPage = () => {
     const fetchWishlist = async () => {
       try {
         const response = await apiClient.get('/wishlist');
-        // Assuming response.data.data is Car[]
         setWishlist(response.data.data);
       } catch (error) {
         toastError('Failed to load wishlist');
@@ -83,7 +82,7 @@ const WishlistPage = () => {
           >
             <div className="relative aspect-[4/3] bg-slate-100 dark:bg-dark-800 overflow-hidden">
               <img 
-                src={car.primaryImageUrl || (car.images && car.images[0]?.imageUrl)} 
+                src={car.primaryImageUrl || (car.images && car.images[0]?.imageUrl) || '/placeholder-car.jpg'} 
                 alt={`${car.brand} ${car.model}`}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />

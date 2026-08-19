@@ -1,25 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, Users, KeyRound, Settings, Droplet, Wind, Briefcase, Zap, Heart, Star, ChevronLeft } from 'lucide-react';
+import { MapPin, Users, KeyRound, Settings, Wind, Briefcase, Zap, Heart, Star, ChevronLeft } from 'lucide-react';
 import { carService } from '../services/carService';
-import { wishlistService } from '../services/wishlistService';
 import { reviewService, ReviewItem } from '../services/reviewService';
 import { Car } from '../types/car.types';
-import { PageResponse } from '../types/api.types';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { RatingStars } from '../components/common/RatingStars';
-import { SkeletonLoader } from '../components/common/SkeletonLoader';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import apiClient from '../services/api';
 
-const CarDetailPage = () => {
+export const CarDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { showToast, error: toastError, success } = useToast();
+  const { error: toastError, success, info } = useToast();
 
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,7 +91,7 @@ const CarDetailPage = () => {
 
   const toggleWishlist = async () => {
     if (!isAuthenticated) {
-      showToast({ type: 'info', title: 'Login Required', description: 'Please login to add to wishlist' });
+      info('Login Required', 'Please login to add to wishlist');
       navigate('/login');
       return;
     }

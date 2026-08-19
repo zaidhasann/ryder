@@ -29,10 +29,10 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    primary: 'bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white shadow-lg shadow-brand-600/25 focus:ring-brand-500 border border-transparent',
-    secondary: 'bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-white border border-slate-700 focus:ring-slate-500',
-    outline: 'bg-transparent hover:bg-slate-100 dark:hover:bg-dark-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-dark-700 focus:ring-brand-500',
-    ghost: 'bg-transparent hover:bg-slate-100 dark:hover:bg-dark-800 text-slate-700 dark:text-slate-300 focus:ring-slate-500',
+    primary: 'bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 active:from-brand-700 active:to-brand-800 text-white shadow-lg shadow-brand-500/30 focus:ring-brand-400 border border-transparent',
+    secondary: 'bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-white border border-slate-700 focus:ring-brand-400',
+    outline: 'bg-transparent hover:bg-amber-50 dark:hover:bg-dark-800 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 focus:ring-brand-400',
+    ghost: 'bg-transparent hover:bg-amber-50 dark:hover:bg-dark-800 text-slate-700 dark:text-slate-300 focus:ring-brand-400',
     danger: 'bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/25 focus:ring-rose-500',
     amber: 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg shadow-orange-500/25 focus:ring-orange-500',
   };

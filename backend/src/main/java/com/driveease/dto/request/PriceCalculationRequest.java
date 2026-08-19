@@ -1,24 +1,27 @@
 package com.driveease.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 public class PriceCalculationRequest {
     @NotNull
     private Long carId;
     @NotNull
-    private ZonedDateTime startTime;
+    private Instant startTime;
     @NotNull
-    private ZonedDateTime endTime;
+    private Instant endTime;
     private List<Long> addonIds;
 
     public Long getCarId() { return carId; }
     public void setCarId(Long carId) { this.carId = carId; }
-    public ZonedDateTime getStartTime() { return startTime; }
-    public void setStartTime(ZonedDateTime startTime) { this.startTime = startTime; }
-    public ZonedDateTime getEndTime() { return endTime; }
-    public void setEndTime(ZonedDateTime endTime) { this.endTime = endTime; }
+
+    public Instant getStartTime() { return startTime; }
+    public void setStartTime(Instant startTime) { this.startTime = startTime; }
+
+    public Instant getEndTime() { return endTime; }
+    public void setEndTime(Instant endTime) { this.endTime = endTime; }
+
     public List<Long> getAddonIds() { return addonIds; }
     public void setAddonIds(List<Long> addonIds) { this.addonIds = addonIds; }
 }

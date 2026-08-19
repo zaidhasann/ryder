@@ -6,6 +6,7 @@ import com.driveease.dto.response.ApiResponse;
 import com.driveease.dto.response.BookingResponse;
 import com.driveease.dto.response.PageResponse;
 import com.driveease.dto.response.PriceBreakdownResponse;
+import com.driveease.entity.enums.BookingStatus;
 import com.driveease.security.UserPrincipal;
 import com.driveease.service.BookingService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -41,8 +42,9 @@ public class BookingController {
     @GetMapping
     public ApiResponse<PageResponse<BookingResponse>> getUserBookings(@AuthenticationPrincipal UserPrincipal principal,
                                                                       @RequestParam(defaultValue = "0") int page,
-                                                                      @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.success(bookingService.getUserBookings(principal.getId(), page, size));
+                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                      @RequestParam(required = false) BookingStatus status) {
+        return ApiResponse.success(bookingService.getUserBookings(principal.getId(), page, size, status));
     }
 
     @GetMapping("/{id}")

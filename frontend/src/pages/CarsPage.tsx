@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Filter, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { Car, Location, CarFilterParams, PageResponse } from '../types';
 import carService from '../services/carService';
@@ -12,8 +12,6 @@ import { CarCardSkeleton } from '../components/common/SkeletonLoader';
 
 export const CarsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const [carsData, setCarsData] = useState<PageResponse<Car> | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);

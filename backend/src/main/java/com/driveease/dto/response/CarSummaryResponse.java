@@ -5,6 +5,8 @@ import com.driveease.entity.enums.FuelType;
 import com.driveease.entity.enums.Transmission;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CarSummaryResponse {
     private Long id;
@@ -21,9 +23,11 @@ public class CarSummaryResponse {
     private BigDecimal ratingAvg;
     private Integer reviewCount;
     private String thumbnailUrl;
+    private String primaryImageUrl;
     private String locationCity;
     private Long locationId;
     private Boolean isWishlisted;
+    private List<String> imageUrls = new ArrayList<>();
 
     public CarSummaryResponse() {
     }
@@ -67,8 +71,17 @@ public class CarSummaryResponse {
     public Integer getReviewCount() { return reviewCount; }
     public void setReviewCount(Integer reviewCount) { this.reviewCount = reviewCount; }
 
-    public String getThumbnailUrl() { return thumbnailUrl; }
-    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
+    public String getThumbnailUrl() { return thumbnailUrl != null ? thumbnailUrl : primaryImageUrl; }
+    public void setThumbnailUrl(String thumbnailUrl) { 
+        this.thumbnailUrl = thumbnailUrl; 
+        if (this.primaryImageUrl == null) this.primaryImageUrl = thumbnailUrl;
+    }
+
+    public String getPrimaryImageUrl() { return primaryImageUrl != null ? primaryImageUrl : thumbnailUrl; }
+    public void setPrimaryImageUrl(String primaryImageUrl) { 
+        this.primaryImageUrl = primaryImageUrl; 
+        if (this.thumbnailUrl == null) this.thumbnailUrl = primaryImageUrl;
+    }
 
     public String getLocationCity() { return locationCity; }
     public void setLocationCity(String locationCity) { this.locationCity = locationCity; }
@@ -78,6 +91,9 @@ public class CarSummaryResponse {
 
     public Boolean getIsWishlisted() { return isWishlisted; }
     public void setIsWishlisted(Boolean isWishlisted) { this.isWishlisted = isWishlisted; }
+
+    public List<String> getImageUrls() { return imageUrls; }
+    public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -96,9 +112,11 @@ public class CarSummaryResponse {
         private BigDecimal ratingAvg;
         private Integer reviewCount;
         private String thumbnailUrl;
+        private String primaryImageUrl;
         private String locationCity;
         private Long locationId;
         private Boolean isWishlisted;
+        private List<String> imageUrls = new ArrayList<>();
 
         public Builder id(Long id) { this.id = id; return this; }
         public Builder brand(String brand) { this.brand = brand; return this; }
@@ -114,9 +132,11 @@ public class CarSummaryResponse {
         public Builder ratingAvg(BigDecimal ratingAvg) { this.ratingAvg = ratingAvg; return this; }
         public Builder reviewCount(Integer reviewCount) { this.reviewCount = reviewCount; return this; }
         public Builder thumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; return this; }
+        public Builder primaryImageUrl(String primaryImageUrl) { this.primaryImageUrl = primaryImageUrl; return this; }
         public Builder locationCity(String locationCity) { this.locationCity = locationCity; return this; }
         public Builder locationId(Long locationId) { this.locationId = locationId; return this; }
         public Builder isWishlisted(Boolean isWishlisted) { this.isWishlisted = isWishlisted; return this; }
+        public Builder imageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; return this; }
 
         public CarSummaryResponse build() {
             CarSummaryResponse r = new CarSummaryResponse();
@@ -125,8 +145,10 @@ public class CarSummaryResponse {
             r.doors = this.doors; r.transmission = this.transmission; r.fuelType = this.fuelType;
             r.airConditioned = this.airConditioned; r.ratingAvg = this.ratingAvg;
             r.reviewCount = this.reviewCount; r.thumbnailUrl = this.thumbnailUrl;
+            r.primaryImageUrl = this.primaryImageUrl != null ? this.primaryImageUrl : this.thumbnailUrl;
             r.locationCity = this.locationCity; r.locationId = this.locationId;
             r.isWishlisted = this.isWishlisted;
+            r.imageUrls = this.imageUrls;
             return r;
         }
     }

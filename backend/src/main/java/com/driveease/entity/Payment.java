@@ -11,7 +11,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "payments")
-public class Payment extends BaseEntity {
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,33 +23,29 @@ public class Payment extends BaseEntity {
     private Booking booking;
 
     @NotNull
+    @Column(name = "transaction_id", nullable = false, unique = true, length = 100)
+    private String transactionId;
+
+    @NotNull
     @DecimalMin("0.0")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private PaymentStatus status = PaymentStatus.PENDING;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", length = 30)
+    @Column(name = "payment_method", nullable = false, length = 30)
     private PaymentMethod paymentMethod;
 
-    @Column(name = "transaction_id", length = 100)
-    private String transactionId;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false, length = 20)
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
-    @Column(name = "gateway_response", columnDefinition = "TEXT")
-    private String gatewayResponse;
+    @Column(name = "payment_gateway_response", columnDefinition = "TEXT")
+    private String paymentGatewayResponse;
 
-    @Column(name = "paid_at")
-    private Instant paidAt;
-
-    @Column(name = "refunded_at")
-    private Instant refundedAt;
-
-    @Column(name = "refund_amount", precision = 10, scale = 2)
-    private BigDecimal refundAmount;
+    @Column(name = "payment_date", nullable = false)
+    private Instant paymentDate = Instant.now();
 
     public Payment() {
     }
@@ -60,27 +56,21 @@ public class Payment extends BaseEntity {
     public Booking getBooking() { return booking; }
     public void setBooking(Booking booking) { this.booking = booking; }
 
+    public String getTransactionId() { return transactionId; }
+    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
-
-    public PaymentStatus getStatus() { return status; }
-    public void setStatus(PaymentStatus status) { this.status = status; }
 
     public PaymentMethod getPaymentMethod() { return paymentMethod; }
     public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
 
-    public String getTransactionId() { return transactionId; }
-    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+    public PaymentStatus getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
 
-    public String getGatewayResponse() { return gatewayResponse; }
-    public void setGatewayResponse(String gatewayResponse) { this.gatewayResponse = gatewayResponse; }
+    public String getPaymentGatewayResponse() { return paymentGatewayResponse; }
+    public void setPaymentGatewayResponse(String paymentGatewayResponse) { this.paymentGatewayResponse = paymentGatewayResponse; }
 
-    public Instant getPaidAt() { return paidAt; }
-    public void setPaidAt(Instant paidAt) { this.paidAt = paidAt; }
-
-    public Instant getRefundedAt() { return refundedAt; }
-    public void setRefundedAt(Instant refundedAt) { this.refundedAt = refundedAt; }
-
-    public BigDecimal getRefundAmount() { return refundAmount; }
-    public void setRefundAmount(BigDecimal refundAmount) { this.refundAmount = refundAmount; }
+    public Instant getPaymentDate() { return paymentDate; }
+    public void setPaymentDate(Instant paymentDate) { this.paymentDate = paymentDate; }
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Car, Users, Book, DollarSign, Activity, ChevronRight,
-  Filter, MoreVertical, CheckCircle, XCircle
+  Car, Users, Book, DollarSign, Activity
 } from 'lucide-react';
 import apiClient from '../services/api';
 import { AdminStats } from '../types/admin.types';
@@ -10,7 +9,6 @@ import { User } from '../types/auth.types';
 import { PageResponse } from '../types/api.types';
 import { Button } from '../components/common/Button';
 import { Badge, BadgeVariant } from '../components/common/Badge';
-import { SkeletonLoader } from '../components/common/SkeletonLoader';
 import { useToast } from '../context/ToastContext';
 
 const getStatusVariant = (status: BookingStatus): BadgeVariant => {
@@ -25,8 +23,8 @@ const getStatusVariant = (status: BookingStatus): BadgeVariant => {
   }
 };
 
-const AdminPage = () => {
-  const { showToast, success, error: toastError } = useToast();
+const AdminPage: React.FC = () => {
+  const { success, error: toastError } = useToast();
   
   const [activeTab, setActiveTab] = useState<'bookings' | 'users'>('bookings');
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -101,13 +99,14 @@ const AdminPage = () => {
   const updateBookingStatus = async (bookingId: number, status: BookingStatus) => {
     let reason = undefined;
     if (status === 'CANCELLED') {
-      reason = window.prompt('Please enter a cancellation reason:');
-      if (reason === null) return;
+      const promptRes = window.prompt('Please enter a cancellation reason:');
+      if (promptRes === null) return;
+      reason = promptRes;
     }
     
     try {
       if (status === 'CANCELLED') {
-        await apiClient.put(`/bookings/${bookingId}/cancel`, { reason });
+        await apiClient.put(`/bookings/${bookingId}/cancel`, null, { params: { reason } });
       } else {
         await apiClient.put(`/admin/bookings/${bookingId}/status`, { status });
       }
@@ -193,11 +192,11 @@ const AdminPage = () => {
                       <tr key={booking.id} className="hover:bg-slate-50/50 dark:hover:bg-dark-800/20 transition-colors">
                         <td className="p-4 font-medium text-slate-900 dark:text-white">#{booking.bookingNumber}</td>
                         <td className="p-4">
-                          <div className="text-slate-900 dark:text-white font-medium">{booking.user.fullName}</div>
-                          <div className="text-xs text-slate-500">{booking.user.email}</div>
+                          <div className="text-slate-900 dark:text-white font-medium">{booking.user?.fullName || 'Customer'}</div>
+                          <div className="text-xs text-slate-500">{booking.user?.email || ''}</div>
                         </td>
                         <td className="p-4">
-                          <div className="text-slate-900 dark:text-white">{booking.car.brand} {booking.car.model}</div>
+                          <div className="text-slate-900 dark:text-white">{booking.car?.brand} {booking.car?.model}</div>
                         </td>
                         <td className="p-4 text-xs text-slate-600 dark:text-slate-300">
                           <div>{new Date(booking.startTime).toLocaleDateString()}</div>

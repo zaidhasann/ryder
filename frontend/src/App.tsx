@@ -5,34 +5,17 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 
-// Existing pages
+// Pages
+import HomePage from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
-// Assuming CarsPage exists
 import CarsPage from './pages/CarsPage';
-
-// New pages
 import CarDetailPage from './pages/CarDetailPage';
 import BookingPage from './pages/BookingPage';
 import DashboardPage from './pages/DashboardPage';
 import BookingsPage from './pages/BookingsPage';
 import WishlistPage from './pages/WishlistPage';
 import AdminPage from './pages/AdminPage';
-
-// Placeholder Home Page
-const HomePage = () => (
-  <div className="py-24 px-4 max-w-7xl mx-auto text-center space-y-6">
-    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-sm font-semibold">
-      🚀 DriveEase Platform Initialized
-    </div>
-    <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-      Find the perfect car for <span className="text-gradient">your journey.</span>
-    </h1>
-    <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-      Experience luxury sedans, rugged SUVs, and high-performance electric vehicles with guaranteed zero-overlap bookings and transparent server-side pricing.
-    </p>
-  </div>
-);
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -43,7 +26,7 @@ const LoadingSpinner = () => (
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) return <LoadingSpinner />;
-  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
 

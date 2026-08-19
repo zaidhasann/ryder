@@ -29,4 +29,8 @@ public class UserMapper {
     public UserResponse toUserResponse(User user) {
         return toUserResponse(user, user.getBookings() != null ? user.getBookings().size() : 0);
     }
+
+    public UserResponse toResponse(User user) {
+        return toUserResponse(user);
+    }
 }

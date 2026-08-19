@@ -8,9 +8,9 @@ import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
 import { Badge } from '../components/common/Badge';
 
-const DashboardPage = () => {
+export const DashboardPage: React.FC = () => {
   const { user, refreshUserProfile } = useAuth();
-  const { showToast, success, error: toastError } = useToast();
+  const { success, error: toastError } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
   const [firstName, setFirstName] = useState(user?.firstName || '');

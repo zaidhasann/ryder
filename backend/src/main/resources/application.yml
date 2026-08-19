@@ -16,9 +16,9 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:driveease}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://ep-fragrant-violet-ax7asx24.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require
+    username: neondb_owner
+    password: npg_Jy2tAGzPj5uT
     driver-class-name: org.postgresql.Driver
 
   jpa:

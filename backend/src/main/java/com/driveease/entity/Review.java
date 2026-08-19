@@ -9,7 +9,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "reviews")
-public class Review extends BaseEntity {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,14 +36,15 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private Integer rating;
 
-    @Column(columnDefinition = "TEXT")
+    @NotNull
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String comment;
 
-    @Column(name = "is_verified", nullable = false)
-    private Boolean isVerified = false;
+    @Column(name = "is_approved", nullable = false)
+    private Boolean isApproved = true;
 
-    @Column(name = "moderated_at")
-    private Instant moderatedAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt = Instant.now();
 
     public Review() {
     }
@@ -66,9 +67,9 @@ public class Review extends BaseEntity {
     public String getComment() { return comment; }
     public void setComment(String comment) { this.comment = comment; }
 
-    public Boolean getIsVerified() { return isVerified; }
-    public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
+    public Boolean getIsApproved() { return isApproved; }
+    public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
 
-    public Instant getModeratedAt() { return moderatedAt; }
-    public void setModeratedAt(Instant moderatedAt) { this.moderatedAt = moderatedAt; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
 }

@@ -1,5 +1,9 @@
 import React from 'react';
 
+export const SkeletonLoader: React.FC<{ className?: string }> = ({ className = 'h-4 w-full' }) => {
+  return <div className={`bg-slate-200 dark:bg-dark-800 rounded-md animate-pulse ${className}`} />;
+};
+
 export const CarCardSkeleton: React.FC = () => {
   return (
     <div className="bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-800 rounded-2xl overflow-hidden shadow-sm animate-pulse flex flex-col">
@@ -59,3 +63,5 @@ export const StatCardSkeleton: React.FC = () => {
     </div>
   );
 };
+
+export default SkeletonLoader;

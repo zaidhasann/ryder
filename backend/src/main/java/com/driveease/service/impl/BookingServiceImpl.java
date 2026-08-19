@@ -19,8 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -39,7 +41,14 @@ public class BookingServiceImpl implements BookingService {
     private final PaymentRepository paymentRepository;
     private final BookingMapper bookingMapper;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, CarRepository carRepository, AddonRepository addonRepository, LocationRepository locationRepository, UserRepository userRepository, BookingAddonRepository bookingAddonRepository, PaymentRepository paymentRepository, BookingMapper bookingMapper) {
+    public BookingServiceImpl(BookingRepository bookingRepository,
+                              CarRepository carRepository,
+                              AddonRepository addonRepository,
+                              LocationRepository locationRepository,
+                              UserRepository userRepository,
+                              BookingAddonRepository bookingAddonRepository,
+                              PaymentRepository paymentRepository,
+                              BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.carRepository = carRepository;
         this.addonRepository = addonRepository;
@@ -54,40 +63,51 @@ public class BookingServiceImpl implements BookingService {
     public PriceBreakdownResponse calculatePrice(PriceCalculationRequest request) {
         Car car = carRepository.findById(request.getCarId())
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "id", request.getCarId()));
-        
+
         long rentalDays = ChronoUnit.DAYS.between(
-                request.getStartTime().atZone(ZoneId.systemDefault()).toLocalDate(),
-                request.getEndTime().atZone(ZoneId.systemDefault()).toLocalDate()
+                request.getStartTime().atZone(ZoneOffset.UTC).toLocalDate(),
+                request.getEndTime().atZone(ZoneOffset.UTC).toLocalDate()
         );
-        if (rentalDays < 1) rentalDays = 1;
+        if (rentalDays < 1) {
+            rentalDays = 1;
+        }
 
         BigDecimal baseAmount = car.getPricePerDay().multiply(BigDecimal.valueOf(rentalDays));
         BigDecimal addonAmount = BigDecimal.ZERO;
-        
-        List<PriceBreakdownResponse.BreakdownItem> items = new ArrayList<>();
-        items.add(new PriceBreakdownResponse.BreakdownItem("Base Rental (" + rentalDays + " days × ₹" + car.getPricePerDay() + "/day)", baseAmount));
 
-        if (request.getAddonIds() != null) {
+        List<PriceBreakdownResponse.BreakdownItem> items = new ArrayList<>();
+        items.add(new PriceBreakdownResponse.BreakdownItem(
+                "Base Rental (" + rentalDays + " days × ₹" + car.getPricePerDay() + "/day)",
+                baseAmount
+        ));
+
+        if (request.getAddonIds() != null && !request.getAddonIds().isEmpty()) {
             for (Long addonId : request.getAddonIds()) {
                 Addon addon = addonRepository.findById(addonId)
                         .orElseThrow(() -> new ResourceNotFoundException("Addon", "id", addonId));
                 BigDecimal aAmount = addon.getPricePerDay().multiply(BigDecimal.valueOf(rentalDays));
                 addonAmount = addonAmount.add(aAmount);
-                items.add(new PriceBreakdownResponse.BreakdownItem(addon.getName() + " (" + rentalDays + " days × ₹" + addon.getPricePerDay() + "/day)", aAmount));
+                items.add(new PriceBreakdownResponse.BreakdownItem(
+                        addon.getName() + " (" + rentalDays + " days × ₹" + addon.getPricePerDay() + "/day)",
+                        aAmount
+                ));
             }
         }
 
-        BigDecimal taxAmount = baseAmount.add(addonAmount).multiply(BigDecimal.valueOf(0.18));
+        BigDecimal subtotal = baseAmount.add(addonAmount);
+        BigDecimal taxAmount = subtotal.multiply(BigDecimal.valueOf(0.18)).setScale(2, RoundingMode.HALF_UP);
         items.add(new PriceBreakdownResponse.BreakdownItem("GST (18%)", taxAmount));
-        
-        BigDecimal totalAmount = baseAmount.add(addonAmount).add(taxAmount);
+
+        BigDecimal totalAmount = subtotal.add(taxAmount).setScale(2, RoundingMode.HALF_UP);
 
         PriceBreakdownResponse res = new PriceBreakdownResponse();
+        res.setRentalDays((int) rentalDays);
+        res.setBasePricePerDay(car.getPricePerDay());
         res.setBaseAmount(baseAmount);
         res.setAddonAmount(addonAmount);
         res.setTaxAmount(taxAmount);
         res.setTotalAmount(totalAmount);
-        res.setItems(items);
+        res.setBreakdownItems(items);
         return res;
     }
 
@@ -100,8 +120,8 @@ public class BookingServiceImpl implements BookingService {
 
         Car car = carRepository.findById(request.getCarId())
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "id", request.getCarId()));
-        if (!car.getIsActive()) {
-            throw new BadRequestException("Car is not active");
+        if (!Boolean.TRUE.equals(car.getIsActive())) {
+            throw new BadRequestException("Car is currently unavailable");
         }
 
         long overlapCount = bookingRepository.countOverlappingBookings(
@@ -118,6 +138,12 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
+        Location pickupLocation = locationRepository.findById(request.getPickupLocationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pickup Location", "id", request.getPickupLocationId()));
+
+        Location dropoffLocation = locationRepository.findById(request.getDropoffLocationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Dropoff Location", "id", request.getDropoffLocationId()));
+
         PriceCalculationRequest calcReq = new PriceCalculationRequest();
         calcReq.setCarId(car.getId());
         calcReq.setStartTime(request.getStartTime());
@@ -125,28 +151,35 @@ public class BookingServiceImpl implements BookingService {
         calcReq.setAddonIds(request.getAddonIds());
         PriceBreakdownResponse price = calculatePrice(calcReq);
 
+        String bookingNumber = "BK-" + System.currentTimeMillis() + "-" + (int) (Math.random() * 900 + 100);
+
         Booking booking = new Booking();
+        booking.setBookingNumber(bookingNumber);
         booking.setUser(user);
         booking.setCar(car);
+        booking.setPickupLocation(pickupLocation);
+        booking.setDropoffLocation(dropoffLocation);
         booking.setStartTime(request.getStartTime());
         booking.setEndTime(request.getEndTime());
-        booking.setBasePrice(price.getBaseAmount());
-        booking.setAddonPrice(price.getAddonAmount());
+        booking.setRentalDays(price.getRentalDays());
+        booking.setBasePricePerDay(price.getBasePricePerDay());
+        booking.setBaseAmount(price.getBaseAmount());
+        booking.setAddonAmount(price.getAddonAmount());
         booking.setTaxAmount(price.getTaxAmount());
-        booking.setTotalPrice(price.getTotalAmount());
-        booking.setStatus(BookingStatus.PENDING);
-        booking.setPickupLocation(request.getPickupLocationId() != null ? locationRepository.findById(request.getPickupLocationId()).map(Location::getAddress).orElse(null) : null);
-        booking.setReturnLocation(request.getDropoffLocationId() != null ? locationRepository.findById(request.getDropoffLocationId()).map(Location::getAddress).orElse(null) : null);
-        
+        booking.setTotalAmount(price.getTotalAmount());
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setCustomerNotes(request.getCustomerNotes());
+
         booking = bookingRepository.save(booking);
 
-        if (request.getAddonIds() != null) {
+        if (request.getAddonIds() != null && !request.getAddonIds().isEmpty()) {
             for (Long addonId : request.getAddonIds()) {
                 Addon addon = addonRepository.findById(addonId).orElseThrow();
                 BookingAddon ba = new BookingAddon();
                 ba.setBooking(booking);
                 ba.setAddon(addon);
                 ba.setPriceAtBooking(addon.getPricePerDay());
+                ba.setQuantity(1);
                 bookingAddonRepository.save(ba);
                 booking.getBookingAddons().add(ba);
             }
@@ -155,21 +188,26 @@ public class BookingServiceImpl implements BookingService {
         Payment payment = new Payment();
         payment.setBooking(booking);
         payment.setAmount(price.getTotalAmount());
-        payment.setStatus(PaymentStatus.COMPLETED);
-        payment.setTransactionId(UUID.randomUUID().toString());
-        payment.setPaidAt(Instant.now());
+        payment.setPaymentMethod(request.getPaymentMethod());
+        payment.setPaymentStatus(PaymentStatus.COMPLETED);
+        payment.setTransactionId("TXN-" + UUID.randomUUID().toString().substring(0, 18).toUpperCase());
+        payment.setPaymentDate(Instant.now());
         paymentRepository.save(payment);
-        
+
         booking.setPayment(payment);
-        booking.setStatus(BookingStatus.CONFIRMED);
         booking = bookingRepository.save(booking);
 
         return bookingMapper.toBookingResponse(booking);
     }
 
     @Override
-    public PageResponse<BookingResponse> getUserBookings(Long userId, int page, int size) {
-        Page<Booking> bookings = bookingRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
+    public PageResponse<BookingResponse> getUserBookings(Long userId, int page, int size, BookingStatus status) {
+        Page<Booking> bookings;
+        if (status != null) {
+            bookings = bookingRepository.findByUserIdAndStatusOrderByCreatedAtDesc(userId, status, PageRequest.of(page, size));
+        } else {
+            bookings = bookingRepository.findByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, size));
+        }
         List<BookingResponse> content = bookings.stream().map(bookingMapper::toBookingResponse).collect(Collectors.toList());
         return PageResponse.from(bookings, content);
     }
@@ -179,7 +217,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", "id", bookingId));
         if (!booking.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized");
+            throw new BadRequestException("Unauthorized access to booking");
         }
         return bookingMapper.toBookingResponse(booking);
     }
@@ -190,14 +228,13 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", "id", bookingId));
         if (!booking.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized");
+            throw new BadRequestException("Unauthorized access to booking");
         }
         if (booking.getStatus() != BookingStatus.PENDING && booking.getStatus() != BookingStatus.CONFIRMED) {
             throw new BadRequestException("Only pending or confirmed bookings can be cancelled");
         }
         booking.setStatus(BookingStatus.CANCELLED);
-        booking.setCancellationReason(reason);
-        booking.setCancelledAt(Instant.now());
+        booking.setCancellationReason(reason != null ? reason : "Cancelled by customer");
         booking = bookingRepository.save(booking);
         return bookingMapper.toBookingResponse(booking);
     }

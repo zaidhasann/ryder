@@ -26,8 +26,13 @@ public class CarController {
     @Operation(summary = "Search cars", description = "Public endpoint to search available cars")
     public ResponseEntity<ApiResponse<PageResponse<CarSummaryResponse>>> searchCars(
             @ModelAttribute CarSearchCriteria criteria) {
-        PageResponse<CarSummaryResponse> response = carService.searchCars(criteria);
-        return ResponseEntity.ok(ApiResponse.success(response, "Cars retrieved successfully"));
+        try {
+            PageResponse<CarSummaryResponse> response = carService.searchCars(criteria);
+            return ResponseEntity.ok(ApiResponse.success(response, "Cars retrieved successfully"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @GetMapping("/{id}")

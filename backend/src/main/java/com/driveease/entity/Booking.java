@@ -19,6 +19,10 @@ public class Booking extends BaseEntity {
     private Long id;
 
     @NotNull
+    @Column(name = "booking_number", nullable = false, unique = true, length = 32)
+    private String bookingNumber;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -29,6 +33,16 @@ public class Booking extends BaseEntity {
     private Car car;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pickup_location_id", nullable = false)
+    private Location pickupLocation;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dropoff_location_id", nullable = false)
+    private Location dropoffLocation;
+
+    @NotNull
     @Column(name = "start_time", nullable = false)
     private Instant startTime;
 
@@ -37,37 +51,37 @@ public class Booking extends BaseEntity {
     private Instant endTime;
 
     @NotNull
-    @DecimalMin("0.0")
-    @Column(name = "base_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal basePrice;
+    @Column(name = "rental_days", nullable = false)
+    private Integer rentalDays;
 
-    @Column(name = "addon_price", precision = 10, scale = 2)
-    private BigDecimal addonPrice = BigDecimal.ZERO;
+    @NotNull
+    @DecimalMin("0.0")
+    @Column(name = "base_price_per_day", nullable = false, precision = 10, scale = 2)
+    private BigDecimal basePricePerDay;
+
+    @NotNull
+    @DecimalMin("0.0")
+    @Column(name = "base_amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal baseAmount;
+
+    @Column(name = "addon_amount", precision = 10, scale = 2)
+    private BigDecimal addonAmount = BigDecimal.ZERO;
 
     @Column(name = "tax_amount", precision = 10, scale = 2)
     private BigDecimal taxAmount = BigDecimal.ZERO;
 
     @NotNull
     @DecimalMin("0.0")
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalPrice;
+    @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalAmount;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private BookingStatus status = BookingStatus.PENDING;
 
-    @Column(name = "pickup_location", length = 200)
-    private String pickupLocation;
-
-    @Column(name = "return_location", length = 200)
-    private String returnLocation;
-
-    @Column(name = "special_requests", columnDefinition = "TEXT")
-    private String specialRequests;
-
-    @Column(name = "cancelled_at")
-    private Instant cancelledAt;
+    @Column(name = "customer_notes", columnDefinition = "TEXT")
+    private String customerNotes;
 
     @Column(name = "cancellation_reason", columnDefinition = "TEXT")
     private String cancellationReason;
@@ -87,11 +101,20 @@ public class Booking extends BaseEntity {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
+    public String getBookingNumber() { return bookingNumber; }
+    public void setBookingNumber(String bookingNumber) { this.bookingNumber = bookingNumber; }
+
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
     public Car getCar() { return car; }
     public void setCar(Car car) { this.car = car; }
+
+    public Location getPickupLocation() { return pickupLocation; }
+    public void setPickupLocation(Location pickupLocation) { this.pickupLocation = pickupLocation; }
+
+    public Location getDropoffLocation() { return dropoffLocation; }
+    public void setDropoffLocation(Location dropoffLocation) { this.dropoffLocation = dropoffLocation; }
 
     public Instant getStartTime() { return startTime; }
     public void setStartTime(Instant startTime) { this.startTime = startTime; }
@@ -99,32 +122,29 @@ public class Booking extends BaseEntity {
     public Instant getEndTime() { return endTime; }
     public void setEndTime(Instant endTime) { this.endTime = endTime; }
 
-    public BigDecimal getBasePrice() { return basePrice; }
-    public void setBasePrice(BigDecimal basePrice) { this.basePrice = basePrice; }
+    public Integer getRentalDays() { return rentalDays; }
+    public void setRentalDays(Integer rentalDays) { this.rentalDays = rentalDays; }
 
-    public BigDecimal getAddonPrice() { return addonPrice; }
-    public void setAddonPrice(BigDecimal addonPrice) { this.addonPrice = addonPrice; }
+    public BigDecimal getBasePricePerDay() { return basePricePerDay; }
+    public void setBasePricePerDay(BigDecimal basePricePerDay) { this.basePricePerDay = basePricePerDay; }
+
+    public BigDecimal getBaseAmount() { return baseAmount; }
+    public void setBaseAmount(BigDecimal baseAmount) { this.baseAmount = baseAmount; }
+
+    public BigDecimal getAddonAmount() { return addonAmount; }
+    public void setAddonAmount(BigDecimal addonAmount) { this.addonAmount = addonAmount; }
 
     public BigDecimal getTaxAmount() { return taxAmount; }
     public void setTaxAmount(BigDecimal taxAmount) { this.taxAmount = taxAmount; }
 
-    public BigDecimal getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 
     public BookingStatus getStatus() { return status; }
     public void setStatus(BookingStatus status) { this.status = status; }
 
-    public String getPickupLocation() { return pickupLocation; }
-    public void setPickupLocation(String pickupLocation) { this.pickupLocation = pickupLocation; }
-
-    public String getReturnLocation() { return returnLocation; }
-    public void setReturnLocation(String returnLocation) { this.returnLocation = returnLocation; }
-
-    public String getSpecialRequests() { return specialRequests; }
-    public void setSpecialRequests(String specialRequests) { this.specialRequests = specialRequests; }
-
-    public Instant getCancelledAt() { return cancelledAt; }
-    public void setCancelledAt(Instant cancelledAt) { this.cancelledAt = cancelledAt; }
+    public String getCustomerNotes() { return customerNotes; }
+    public void setCustomerNotes(String customerNotes) { this.customerNotes = customerNotes; }
 
     public String getCancellationReason() { return cancellationReason; }
     public void setCancellationReason(String cancellationReason) { this.cancellationReason = cancellationReason; }

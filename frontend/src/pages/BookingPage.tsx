@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, CreditCard, Check, Info } from 'lucide-react';
+import { Calendar, CreditCard, Check, Info } from 'lucide-react';
 import { carService } from '../services/carService';
 import { bookingService } from '../services/bookingService';
 import apiClient from '../services/api';
@@ -13,11 +13,11 @@ import { Input } from '../components/common/Input';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
-const BookingPage = () => {
+export const BookingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const { showToast, error: toastError, success } = useToast();
+  const { error: toastError, success, info } = useToast();
 
   const [car, setCar] = useState<Car | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -37,10 +37,10 @@ const BookingPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      showToast({ type: 'warning', title: 'Login Required', description: 'Please login to book a car' });
+      info('Login Required', 'Please login to book a car');
       navigate('/login');
     }
-  }, [isAuthenticated, navigate, showToast]);
+  }, [isAuthenticated, navigate, info]);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -297,7 +297,7 @@ const BookingPage = () => {
             
             <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-dark-800 pb-6">
               <img 
-                src={car.primaryImageUrl || (car.images && car.images[0]?.imageUrl)} 
+                src={car.primaryImageUrl || (car.images && car.images[0]?.imageUrl) || '/placeholder-car.jpg'} 
                 alt={car.model} 
                 className="w-20 h-20 object-cover rounded-xl bg-slate-100 dark:bg-dark-800"
               />

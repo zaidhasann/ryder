@@ -9,10 +9,13 @@ import com.driveease.entity.Car;
 import com.driveease.entity.Location;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 public class CarMapper {
 
     public CarSummaryResponse toSummary(Car car) {
+        if (car == null) return null;
         CarSummaryResponse r = new CarSummaryResponse();
         r.setId(car.getId());
         r.setBrand(car.getBrand());
@@ -34,16 +37,21 @@ public class CarMapper {
         }
         
         // Primary image
-        if (car.getImages() != null) {
+        if (car.getImages() != null && !car.getImages().isEmpty()) {
+            r.setImageUrls(car.getImages().stream().map(img -> img.getImageUrl()).collect(Collectors.toList()));
             car.getImages().stream()
-                .filter(img -> img.getIsPrimary())
+                .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
                 .findFirst()
-                .ifPresent(img -> r.setThumbnailUrl(img.getImageUrl()));
+                .ifPresentOrElse(
+                    img -> r.setThumbnailUrl(img.getImageUrl()),
+                    () -> r.setThumbnailUrl(car.getImages().get(0).getImageUrl())
+                );
         }
         return r;
     }
 
     public CarDetailResponse toDetail(Car car) {
+        if (car == null) return null;
         CarDetailResponse r = new CarDetailResponse();
         r.setId(car.getId());
         r.setBrand(car.getBrand());
@@ -68,19 +76,23 @@ public class CarMapper {
             r.setLocation(toLocationResponse(car.getLocation()));
         }
         
-        if (car.getImages() != null) {
+        if (car.getImages() != null && !car.getImages().isEmpty()) {
             r.setImageUrls(car.getImages().stream()
                 .map(img -> img.getImageUrl())
-                .toList());
+                .collect(Collectors.toList()));
             car.getImages().stream()
-                .filter(img -> img.getIsPrimary())
+                .filter(img -> Boolean.TRUE.equals(img.getIsPrimary()))
                 .findFirst()
-                .ifPresent(img -> r.setThumbnailUrl(img.getImageUrl()));
+                .ifPresentOrElse(
+                    img -> r.setThumbnailUrl(img.getImageUrl()),
+                    () -> r.setThumbnailUrl(car.getImages().get(0).getImageUrl())
+                );
         }
         return r;
     }
 
     public LocationResponse toLocationResponse(Location loc) {
+        if (loc == null) return null;
         LocationResponse r = new LocationResponse();
         r.setId(loc.getId());
         r.setName(loc.getName());
@@ -93,12 +105,12 @@ public class CarMapper {
     }
 
     public AddonResponse toAddonResponse(Addon addon) {
+        if (addon == null) return null;
         AddonResponse r = new AddonResponse();
         r.setId(addon.getId());
         r.setName(addon.getName());
         r.setDescription(addon.getDescription());
         r.setPricePerDay(addon.getPricePerDay());
-        r.setIconName(addon.getIconName());
         r.setIsActive(addon.getIsActive());
         return r;
     }

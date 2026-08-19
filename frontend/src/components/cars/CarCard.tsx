@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Users, Calendar, Fuel, Settings, MapPin } from 'lucide-react';
+import { Heart, Users, Fuel, Settings, MapPin } from 'lucide-react';
 import { Car } from '../../types';
 import { Badge, BadgeVariant } from '../common/Badge';
 import { Button } from '../common/Button';
@@ -32,8 +32,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
     e.stopPropagation();
     if (!isAuthenticated) {
       error('Authentication required', 'Please login to add cars to your wishlist.');
-      // Optionally trigger auth modal here, but for now just navigate or show error
-      navigate('/login', { state: { from: location.pathname + location.search }});
+      navigate('/login');
       return;
     }
 
@@ -67,6 +66,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
   };
 
   const formattedPrice = `₹${car.pricePerDay.toLocaleString('en-IN')}`;
+  const city = car.location?.city || 'Available';
 
   return (
     <div 
@@ -75,11 +75,11 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-dark-800">
         <img 
-          src={car.primaryImageUrl || '/placeholder-car.jpg'} 
+          src={car.primaryImageUrl || (car.images && car.images[0]?.imageUrl) || '/placeholder-car.jpg'} 
           alt={`${car.brand} ${car.model}`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=No+Image';
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80';
           }}
         />
         <div className="absolute top-3 left-3">
@@ -111,7 +111,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
               <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-dark-700"></span>
               <div className="flex items-center text-slate-500 dark:text-slate-400 text-sm">
                 <MapPin className="w-3.5 h-3.5 mr-1" />
-                {car.location.city}
+                {city}
               </div>
             </div>
           </div>

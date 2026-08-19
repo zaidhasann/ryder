@@ -9,17 +9,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB', // Primary Electric Blue
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
-          950: '#172554',
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706', // Primary Amber
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+          950: '#451A03',
         },
         dark: {
           50: '#F8FAFC',
@@ -39,14 +39,20 @@ export default {
           amber: '#F59E0B',
           emerald: '#10B981',
           rose: '#F43F5E',
+        },
+        taxi: {
+          yellow: '#FFD700',
+          red: '#DC2626',
+          darkred: '#991B1B',
         }
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'glow-sm': '0 0 15px -3px rgba(37, 99, 235, 0.25)',
-        'glow-lg': '0 0 30px -5px rgba(37, 99, 235, 0.35)',
+        'glow-sm': '0 0 15px -3px rgba(217, 119, 6, 0.35)',
+        'glow-lg': '0 0 30px -5px rgba(217, 119, 6, 0.45)',
+        'glow-red': '0 0 20px -3px rgba(220, 38, 38, 0.4)',
         'card': '0 10px 30px -10px rgba(0, 0, 0, 0.08)',
         'card-dark': '0 10px 30px -10px rgba(0, 0, 0, 0.5)',
       },
