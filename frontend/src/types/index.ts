@@ -6,3 +6,4 @@ export * from './location.types';
 export * from './addon.types';
 export * from './review.types';
 export * from './admin.types';
+export * from './wishlist.types';

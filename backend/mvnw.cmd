@@ -14,6 +14,9 @@ if "%HOME%" == "" (set "HOME=%USERPROFILE%")
 @REM Execute a user defined script before this one
 if exist "%HOME%\mavenrc_pre.bat" call "%HOME%\mavenrc_pre.bat"
 
+set "MAVEN_PROJECTBASEDIR=%~dp0"
+if "%MAVEN_PROJECTBASEDIR:~-1%"=="\" set "MAVEN_PROJECTBASEDIR=%MAVEN_PROJECTBASEDIR:~0,-1%"
+
 set WRAPPER_JAR="%~dp0.mvn\wrapper\maven-wrapper.jar"
 set WRAPPER_LAUNCHER=org.apache.maven.wrapper.MavenWrapperMain
 
@@ -28,7 +31,7 @@ if not exist %WRAPPER_JAR% (
   powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar', '%~dp0.mvn\wrapper\maven-wrapper.jar')"
 )
 
-%JAVA_EXE% -classpath %WRAPPER_JAR% "-Dmaven.home=%~dp0.mvn\wrapper\dists" %WRAPPER_LAUNCHER% %*
+%JAVA_EXE% "-Dmaven.multiModuleProjectDirectory=%MAVEN_PROJECTBASEDIR%" -classpath %WRAPPER_JAR% %WRAPPER_LAUNCHER% %*
 if ERRORLEVEL 1 goto error
 goto end
 

@@ -3,17 +3,11 @@ package com.driveease.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "refresh_tokens")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RefreshToken {
 
     @Id
@@ -33,6 +27,97 @@ public class RefreshToken {
     private Instant expiryDate;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Builder.Default
     private Instant createdAt = Instant.now();
+
+    public RefreshToken() {
+    }
+
+    public RefreshToken(Long id, User user, String token, Instant expiryDate, Instant createdAt) {
+        this.id = id;
+        this.user = user;
+        this.token = token;
+        this.expiryDate = expiryDate;
+        this.createdAt = createdAt != null ? createdAt : Instant.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Instant getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Instant expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private User user;
+        private String token;
+        private Instant expiryDate;
+        private Instant createdAt = Instant.now();
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder token(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Builder expiryDate(Instant expiryDate) {
+            this.expiryDate = expiryDate;
+            return this;
+        }
+
+        public Builder createdAt(Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public RefreshToken build() {
+            return new RefreshToken(id, user, token, expiryDate, createdAt);
+        }
+    }
 }
