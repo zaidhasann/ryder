@@ -20,6 +20,25 @@ const TaxiIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// Framer Motion Variants
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 }
+  }
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', damping: 20, stiffness: 100 } }
+};
+
+const popIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  show: { opacity: 1, scale: 1, transition: { type: 'spring', damping: 15, stiffness: 120 } }
+};
+
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [featuredCars, setFeaturedCars] = useState<Car[]>([]);
@@ -74,95 +93,86 @@ export const HomePage: React.FC = () => {
 
       {/* ── Hero Section ── */}
       <section className="relative pt-24 pb-36 lg:pt-32 lg:pb-52 bg-gradient-to-br from-slate-950 via-dark-900 to-amber-950 overflow-hidden">
-        {/* Animated taxi-stripe accent bar */}
         <div className="absolute top-0 left-0 right-0 h-1 taxi-stripe opacity-80" />
 
-        {/* Background glow blobs */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-10 right-10 w-64 h-64 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Floating taxi/car decorations */}
+        {/* Dynamic Background Glow Blobs */}
         <motion.div
-          animate={{ x: [0, 18, 0], y: [0, -8, 0] }}
+          animate={{ scale: [1, 1.15, 1], rotate: [0, 90, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/20 rounded-full blur-[100px] pointer-events-none"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.25, 1], rotate: [0, -90, 0] }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-10 right-10 w-72 h-72 bg-red-600/15 rounded-full blur-[100px] pointer-events-none"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], y: [0, -50, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute bottom-0 left-1/3 w-80 h-80 bg-amber-400/10 rounded-full blur-[100px] pointer-events-none"
+        />
+
+        {/* Floating taxi decorations */}
+        <motion.div
+          animate={{ x: [0, 20, 0], y: [0, -10, 0] }}
           transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-16 right-[12%] text-amber-400 opacity-30 hidden lg:block"
+          className="absolute top-16 right-[12%] text-amber-400 opacity-20 hidden lg:block"
         >
           <TaxiIcon className="w-28 h-14" />
         </motion.div>
         <motion.div
-          animate={{ x: [0, -14, 0], y: [0, 10, 0] }}
-          transition={{ duration: 6.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-          className="absolute bottom-28 left-[8%] text-red-500 opacity-25 hidden lg:block"
+          animate={{ x: [0, -15, 0], y: [0, 15, 0] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          className="absolute bottom-28 left-[8%] text-red-500 opacity-20 hidden lg:block"
         >
           <TaxiIcon className="w-20 h-10" />
         </motion.div>
-        <motion.div
-          animate={{ x: [0, 10, 0], y: [0, -12, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute top-32 left-[18%] text-yellow-300 opacity-20 hidden lg:block"
-        >
-          <CarIcon className="w-10 h-10" />
-        </motion.div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="text-center max-w-3xl mx-auto mb-12"
+          >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-sm font-semibold mb-6"
-            >
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-sm font-semibold mb-6 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
               <Zap className="w-3.5 h-3.5 text-amber-400" />
               India's #1 Premium Car Rental
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight"
-            >
+            <motion.h1 variants={fadeUp} className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
               Find Your{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow-sm">
                 Perfect Ride
               </span>
             </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-lg md:text-xl text-slate-300 mb-8"
-            >
+            <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
               Premium cars & taxis across India. Zero-overlap guarantee, instant booking, 24/7 support.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center gap-4"
-            >
-              <Button size="lg" onClick={() => navigate('/cars')}>
+            <motion.div variants={fadeUp} className="flex justify-center gap-4">
+              <Button size="lg" className="shadow-lg hover:shadow-amber-500/20 hover:-translate-y-1 transition-all" onClick={() => navigate('/cars')}>
                 🚖 Explore Fleet
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="text-white border-white/20 hover:bg-white/10 dark:hover:bg-white/10"
+                className="text-white border-white/20 hover:bg-white/10 dark:hover:bg-white/10 backdrop-blur-sm transition-all hover:-translate-y-1"
                 onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Learn More
               </Button>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Search Bar */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-dark-900 p-4 rounded-2xl shadow-2xl max-w-4xl mx-auto border border-amber-200/60 dark:border-amber-800/30"
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.4, type: 'spring', stiffness: 100, damping: 20 }}
+            className="bg-white/95 dark:bg-dark-900/95 backdrop-blur-xl p-5 rounded-3xl shadow-2xl max-w-4xl mx-auto border border-amber-200/50 dark:border-amber-500/20"
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div>
@@ -172,7 +182,7 @@ export const HomePage: React.FC = () => {
                   onChange={(e) => setSearchParams({ ...searchParams, locationId: e.target.value })}
                   options={locations.map(l => ({ value: l.id.toString(), label: l.city }))}
                   placeholder="Select City"
-                  className="bg-amber-50 dark:bg-dark-950"
+                  className="bg-amber-50/50 dark:bg-dark-950/50"
                 />
               </div>
               <div>
@@ -182,7 +192,7 @@ export const HomePage: React.FC = () => {
                   onChange={(e) => setSearchParams({ ...searchParams, category: e.target.value })}
                   options={categories}
                   placeholder="Any Category"
-                  className="bg-amber-50 dark:bg-dark-950"
+                  className="bg-amber-50/50 dark:bg-dark-950/50"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -190,7 +200,7 @@ export const HomePage: React.FC = () => {
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Pickup</label>
                   <input
                     type="date"
-                    className="w-full rounded-xl border border-amber-200 dark:border-dark-700 bg-amber-50 dark:bg-dark-950 text-slate-900 dark:text-slate-100 px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                    className="w-full rounded-xl border border-amber-200 dark:border-dark-700 bg-amber-50/50 dark:bg-dark-950/50 text-slate-900 dark:text-slate-100 px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none transition-shadow"
                     value={searchParams.startDate}
                     onChange={(e) => setSearchParams({ ...searchParams, startDate: e.target.value })}
                   />
@@ -199,161 +209,237 @@ export const HomePage: React.FC = () => {
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block">Dropoff</label>
                   <input
                     type="date"
-                    className="w-full rounded-xl border border-amber-200 dark:border-dark-700 bg-amber-50 dark:bg-dark-950 text-slate-900 dark:text-slate-100 px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none"
+                    className="w-full rounded-xl border border-amber-200 dark:border-dark-700 bg-amber-50/50 dark:bg-dark-950/50 text-slate-900 dark:text-slate-100 px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none transition-shadow"
                     value={searchParams.endDate}
                     onChange={(e) => setSearchParams({ ...searchParams, endDate: e.target.value })}
                   />
                 </div>
               </div>
-              <Button size="lg" className="w-full py-2.5 h-[46px]" onClick={handleSearch} rightIcon={<Search className="w-4 h-4" />}>
+              <Button size="lg" className="w-full py-2.5 h-[46px] shadow-md hover:shadow-lg transition-all" onClick={handleSearch} rightIcon={<Search className="w-4 h-4" />}>
                 Search
               </Button>
             </div>
           </motion.div>
 
           {/* Stats row */}
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="text-white">
-              <div className="font-bold text-3xl text-amber-400">16+</div>
-              <div className="text-sm text-slate-400 mt-1">Premium Cars</div>
-            </div>
-            <div className="text-white">
-              <div className="font-bold text-3xl text-red-400">5</div>
-              <div className="text-sm text-slate-400 mt-1">Cities</div>
-            </div>
-            <div className="text-white">
-              <div className="font-bold text-3xl text-amber-400">100%</div>
-              <div className="text-sm text-slate-400 mt-1">Zero Overlap</div>
-            </div>
-            <div className="text-white">
-              <div className="font-bold text-3xl text-red-400">24/7</div>
-              <div className="text-sm text-slate-400 mt-1">Support</div>
-            </div>
-          </div>
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 text-center"
+          >
+            {[
+              { val: '16+', label: 'Premium Cars', color: 'text-amber-400' },
+              { val: '5', label: 'Cities', color: 'text-red-400' },
+              { val: '100%', label: 'Zero Overlap', color: 'text-amber-400' },
+              { val: '24/7', label: 'Support', color: 'text-red-400' }
+            ].map((stat, i) => (
+              <motion.div key={i} variants={popIn} className="text-white">
+                <div className={`font-black text-4xl mb-1 ${stat.color} drop-shadow-md`}>{stat.val}</div>
+                <div className="text-sm text-slate-300 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* ── How It Works ── */}
-      <section id="how-it-works" className="py-20 bg-white dark:bg-dark-900">
+      <section id="how-it-works" className="py-24 bg-white dark:bg-dark-900 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">How It Works</h2>
-            <p className="mt-4 text-slate-500 dark:text-slate-400">Rent your dream car in 4 simple steps</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white">How It Works</h2>
+            <p className="mt-4 text-slate-500 dark:text-slate-400 text-lg">Rent your dream car in 4 simple steps</p>
+          </motion.div>
+          
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 md:grid-cols-4 gap-8"
+          >
             {[
               { icon: <Search className="w-8 h-8 text-amber-500" />, title: 'Search', desc: 'Find the perfect car for your needs', color: 'bg-amber-500' },
               { icon: <Calendar className="w-8 h-8 text-red-500" />, title: 'Select Dates', desc: 'Choose your pickup and dropoff dates', color: 'bg-red-500' },
               { icon: <Shield className="w-8 h-8 text-amber-500" />, title: 'Add Extras', desc: 'Add insurance, child seats, etc.', color: 'bg-amber-500' },
               { icon: <CarIcon className="w-8 h-8 text-red-500" />, title: 'Drive Away', desc: 'Pick up your car and hit the road', color: 'bg-red-500' }
             ].map((step, idx) => (
-              <div key={idx} className="relative p-6 bg-amber-50 dark:bg-dark-800 rounded-2xl text-center shadow-sm border border-amber-100 dark:border-dark-700 hover:shadow-md transition-shadow">
-                <div className={`w-10 h-10 mx-auto ${step.color} rounded-full flex items-center justify-center text-white font-bold text-sm absolute -top-5 left-1/2 -translate-x-1/2 shadow-md`}>
+              <motion.div 
+                key={idx} 
+                variants={fadeUp}
+                whileHover={{ y: -5 }}
+                className="relative p-6 bg-amber-50/50 dark:bg-dark-800/50 backdrop-blur-sm rounded-2xl text-center shadow-sm border border-amber-100/50 dark:border-dark-700/50 hover:shadow-xl hover:border-amber-200 transition-all"
+              >
+                <div className={`w-12 h-12 mx-auto ${step.color} rounded-full flex items-center justify-center text-white font-black text-lg absolute -top-6 left-1/2 -translate-x-1/2 shadow-lg ring-4 ring-white dark:ring-dark-900`}>
                   {idx + 1}
                 </div>
-                <div className="mt-6 flex justify-center mb-4">{step.icon}</div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{step.title}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm">{step.desc}</p>
-              </div>
+                <div className="mt-8 flex justify-center mb-5 bg-white dark:bg-dark-900 w-16 h-16 mx-auto rounded-2xl items-center shadow-inner">{step.icon}</div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{step.title}</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{step.desc}</p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── Category Pills ── */}
-      <section className="py-10 bg-amber-50 dark:bg-dark-950 border-y border-amber-100 dark:border-dark-800">
+      <section className="py-12 bg-amber-50/50 dark:bg-dark-950/50 border-y border-amber-100 dark:border-dark-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-3">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="flex flex-wrap justify-center gap-3 md:gap-4"
+          >
             {[
-              { emoji: '🚖', label: 'Taxi', cat: 'SEDAN', color: 'bg-amber-400 text-amber-950' },
-              { emoji: '🚗', label: 'Sedan', cat: 'SEDAN', color: 'bg-yellow-100 text-yellow-800 border border-yellow-300' },
-              { emoji: '🚙', label: 'SUV', cat: 'SUV', color: 'bg-red-100 text-red-700 border border-red-200' },
-              { emoji: '💎', label: 'Luxury', cat: 'LUXURY', color: 'bg-amber-100 text-amber-800 border border-amber-300' },
-              { emoji: '⚡', label: 'Electric', cat: 'EV', color: 'bg-emerald-100 text-emerald-700 border border-emerald-200' },
-              { emoji: '🚕', label: 'Hatchback', cat: 'HATCHBACK', color: 'bg-red-500 text-white' },
+              { emoji: '🚖', label: 'Taxi', cat: 'SEDAN', color: 'bg-amber-400 text-amber-950 hover:bg-amber-500 hover:text-white' },
+              { emoji: '🚗', label: 'Sedan', cat: 'SEDAN', color: 'bg-white dark:bg-dark-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700 hover:border-amber-400' },
+              { emoji: '🚙', label: 'SUV', cat: 'SUV', color: 'bg-white dark:bg-dark-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700 hover:border-amber-400' },
+              { emoji: '💎', label: 'Luxury', cat: 'LUXURY', color: 'bg-white dark:bg-dark-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700 hover:border-amber-400' },
+              { emoji: '⚡', label: 'Electric', cat: 'EV', color: 'bg-white dark:bg-dark-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700 hover:border-amber-400' },
+              { emoji: '🚕', label: 'Hatchback', cat: 'HATCHBACK', color: 'bg-white dark:bg-dark-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700 hover:border-amber-400' },
             ].map(item => (
-              <button
+              <motion.button
                 key={item.cat + item.label}
+                variants={popIn}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => navigate(`/cars?category=${item.cat}`)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${item.color}`}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-sm transition-colors shadow-sm hover:shadow-md ${item.color}`}
               >
-                <span className="text-base">{item.emoji}</span>
+                <span className="text-xl">{item.emoji}</span>
                 {item.label}
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── Featured Cars ── */}
-      <section className="py-20 bg-amber-50 dark:bg-dark-950">
+      <section className="py-24 bg-amber-50 dark:bg-dark-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Featured Cars</h2>
-              <p className="mt-2 text-slate-500 dark:text-slate-400">Our highest rated vehicles</p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4"
+          >
+            <div className="text-center md:text-left">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white">Featured Cars</h2>
+              <p className="mt-2 text-slate-500 dark:text-slate-400 text-lg">Our highest rated vehicles</p>
             </div>
             <Button variant="ghost" rightIcon={<ArrowRight className="w-4 h-4" />} onClick={() => navigate('/cars')}>
               View All Cars
             </Button>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {isLoading ? (
               Array.from({ length: 6 }).map((_, i) => <CarCardSkeleton key={i} />)
             ) : (
-              featuredCars.map(car => <CarCard key={car.id} car={car} />)
+              featuredCars.map(car => (
+                <motion.div key={car.id} variants={fadeUp}>
+                  <CarCard car={car} />
+                </motion.div>
+              ))
             )}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── Locations ── */}
-      <section id="locations" className="py-20 bg-white dark:bg-dark-900">
+      <section id="locations" className="py-24 bg-white dark:bg-dark-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Our Locations</h2>
-            <p className="mt-4 text-slate-500 dark:text-slate-400">Find us in these major cities</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white">Our Locations</h2>
+            <p className="mt-4 text-slate-500 dark:text-slate-400 text-lg">Find us in these major cities</p>
+          </motion.div>
+          
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6"
+          >
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="bg-amber-50 dark:bg-dark-800 p-6 rounded-2xl animate-pulse h-[120px]" />
               ))
             ) : (
               locations.map(loc => (
-                <div
+                <motion.div
                   key={loc.id}
-                  className="bg-amber-50 dark:bg-dark-800 p-6 rounded-2xl text-center border border-amber-100 dark:border-dark-700 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer group"
+                  variants={popIn}
+                  whileHover={{ scale: 1.03, y: -5 }}
+                  className="bg-amber-50/50 dark:bg-dark-800/50 backdrop-blur-sm p-6 rounded-3xl text-center border border-amber-100/50 dark:border-dark-700/50 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-xl transition-all cursor-pointer group"
                   onClick={() => navigate(`/cars?locationId=${loc.id}`)}
                 >
-                  <MapPin className="w-8 h-8 mx-auto text-amber-500 group-hover:text-red-500 transition-colors mb-3" />
-                  <h3 className="font-semibold text-slate-900 dark:text-white text-sm">{loc.city}</h3>
-                </div>
+                  <div className="bg-white dark:bg-dark-900 w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
+                    <MapPin className="w-6 h-6 text-amber-500 group-hover:text-red-500 transition-colors" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 dark:text-white">{loc.city}</h3>
+                </motion.div>
               ))
             )}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── CTA Section ── */}
-      <section className="py-24 relative overflow-hidden bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600">
+      <section className="py-28 relative overflow-hidden bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600">
         <div className="absolute inset-0 opacity-10 taxi-stripe" />
-        {/* Floating car decorations in CTA */}
-        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-amber-900/20 hidden lg:block">
-          <TaxiIcon className="w-40 h-20" />
-        </div>
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 text-amber-900/20 hidden lg:block scale-x-[-1]">
-          <TaxiIcon className="w-40 h-20" />
-        </div>
+        
+        {/* Animated taxi decorations in CTA */}
+        <motion.div 
+          initial={{ x: -100, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 0.4 }}
+          viewport={{ once: true }}
+          transition={{ type: 'spring', damping: 20, stiffness: 60, delay: 0.2 }}
+          className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-900 drop-shadow-sm hidden lg:block"
+        >
+          <TaxiIcon className="w-48 h-24" />
+        </motion.div>
+        <motion.div 
+          initial={{ x: 100, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 0.4 }}
+          viewport={{ once: true }}
+          transition={{ type: 'spring', damping: 20, stiffness: 60, delay: 0.4 }}
+          className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-900 drop-shadow-sm hidden lg:block scale-x-[-1]"
+        >
+          <TaxiIcon className="w-48 h-24" />
+        </motion.div>
 
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow">Ready to Hit the Road? 🚖</h2>
-          <p className="text-amber-100 mb-10 text-lg">Join thousands of happy customers and book your next ride with DriveEase.</p>
-          <div className="flex justify-center gap-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="max-w-4xl mx-auto px-4 text-center relative z-10"
+        >
+          <h2 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-md">Ready to Hit the Road? 🚖</h2>
+          <p className="text-amber-50 font-medium mb-12 text-xl drop-shadow">Join thousands of happy customers and book your next ride with DriveEase.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button
               size="lg"
-              className="bg-white !text-amber-700 hover:bg-amber-50 shadow-xl font-bold"
+              className="bg-white !text-amber-700 hover:bg-amber-50 shadow-xl font-bold text-lg px-8 py-4 h-auto rounded-full hover:scale-105 transition-transform"
               onClick={() => navigate('/register')}
             >
               Sign Up Free
@@ -361,16 +447,17 @@ export const HomePage: React.FC = () => {
             <Button
               variant="outline"
               size="lg"
-              className="text-white border-white hover:bg-white/15 font-semibold"
+              className="text-white border-2 border-white hover:bg-white/15 font-bold text-lg px-8 py-4 h-auto rounded-full hover:scale-105 transition-transform backdrop-blur-sm"
               onClick={() => navigate('/cars')}
             >
               Explore Fleet
             </Button>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
 };
 
 export default HomePage;
+

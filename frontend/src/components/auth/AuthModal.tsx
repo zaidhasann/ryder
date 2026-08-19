@@ -39,17 +39,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [phone, setPhone] = useState('');
   const [drivingLicense, setDrivingLicense] = useState('');
 
-  const fillDemoAccount = (role: 'user' | 'admin') => {
-    setMode('login');
-    setErrorMessage(null);
-    if (role === 'admin') {
-      setLoginEmail('admin@driveease.com');
-      setLoginPassword('Admin@123');
-    } else {
-      setLoginEmail('user@driveease.com');
-      setLoginPassword('User@123');
-    }
-  };
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,31 +138,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </div>
 
-        {/* Demo Fast-Fill Bar */}
-        {mode === 'login' && (
-          <div className="p-3 bg-brand-50/70 dark:bg-brand-950/30 border border-brand-200/60 dark:border-brand-800/40 rounded-2xl flex flex-col gap-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-700 dark:text-brand-300">
-              <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-              Quick Demo Accounts:
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('user')}
-                className="text-xs font-medium py-1.5 px-2.5 rounded-lg bg-white dark:bg-dark-900 border border-brand-200 dark:border-brand-800/60 text-slate-700 dark:text-slate-200 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors text-left truncate"
-              >
-                👤 <strong>Customer:</strong> user@...
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('admin')}
-                className="text-xs font-medium py-1.5 px-2.5 rounded-lg bg-white dark:bg-dark-900 border border-amber-300 dark:border-amber-700/60 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors text-left truncate"
-              >
-                👑 <strong>Admin:</strong> admin@...
-              </button>
-            </div>
-          </div>
-        )}
+
 
         {/* Error Alert */}
         {errorMessage && (

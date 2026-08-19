@@ -20,16 +20,7 @@ export const LoginPage: React.FC = () => {
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
-  const fillDemoAccount = (role: 'user' | 'admin') => {
-    setErrorMessage(null);
-    if (role === 'admin') {
-      setEmail('admin@driveease.com');
-      setPassword('Admin@123');
-    } else {
-      setEmail('user@driveease.com');
-      setPassword('User@123');
-    }
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,31 +97,7 @@ export const LoginPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Quick Demo Fill Bar */}
-            <div className="p-3.5 bg-brand-50/80 dark:bg-brand-950/30 border border-brand-200/70 dark:border-brand-800/50 rounded-2xl space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-brand-700 dark:text-brand-300">
-                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-                Click to autofill placement demo accounts:
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => fillDemoAccount('user')}
-                  className="text-xs font-medium py-2 px-3 rounded-xl bg-white dark:bg-dark-900 border border-brand-200 dark:border-brand-800/80 text-slate-700 dark:text-slate-200 hover:border-brand-500 transition-colors text-left truncate"
-                >
-                  👤 <strong>Demo User</strong>
-                  <span className="block text-[10px] text-slate-400">user@driveease.com</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fillDemoAccount('admin')}
-                  className="text-xs font-medium py-2 px-3 rounded-xl bg-white dark:bg-dark-900 border border-amber-300 dark:border-amber-700/80 text-amber-700 dark:text-amber-300 hover:border-amber-500 transition-colors text-left truncate"
-                >
-                  👑 <strong>Demo Admin</strong>
-                  <span className="block text-[10px] text-slate-400">admin@driveease.com</span>
-                </button>
-              </div>
-            </div>
+
 
             {/* Error Alert */}
             {errorMessage && (
