@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, User as UserIcon, Phone, FileText, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, User as UserIcon, Phone, FileText } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
